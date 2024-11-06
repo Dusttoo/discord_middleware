@@ -7,7 +7,7 @@
   "compatibleCoreVersion": "12.0",
   "author": "Dusty Mumphrey",
   "url": "https://github.com/Dusttoo/discord_middleware",
-  "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
+  "manifest": "https://github.com/Dusttoo/releases/latest/download/module.json",
   "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.6/Archive.zip",
   "scripts": ["scripts/discord-integration.js"],
   "socket": true,
