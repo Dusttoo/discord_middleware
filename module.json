@@ -1,34 +1,41 @@
 {
-    "id": "discord-bot-integration",
-    "title": "Discord Bot Integration",
-    "description": "A module that enables integration with a Discord bot via WebSocket events.",
-    "version": "1.0.7",
-    "compatibility": {
-      "minimum": "10.0",
-      "verified": "12"
-    },
-    "authors": [
+  "id": "discord-bot-integration",
+  "title": "Discord Bot Integration",
+  "description": "A module that enables integration with a Discord bot via WebSocket events.",
+  "version": "1.0.7",
+  "compatibility": {
+    "minimum": "10.0",
+    "verified": "12"
+  },
+  "authors": [
+    {
+      "name": "Dusty Mumphrey",
+      "url": "https://github.com/Dusttoo"
+    }
+  ],
+  "relationships": {
+    "requires": [
       {
-        "name": "Dusty Mumphrey",
-        "url": "https://github.com/Dusttoo"
-      }
-    ],
-    "relationships": {
-      "requires": [
-        {
-          "id": "socketlib",
-          "type": "module",
-          "compatibility": {
-            "minimum": "1.0",
-            "verified": "1.2.0"
-          }
+        "id": "socketlib",
+        "type": "module",
+        "compatibility": {
+          "minimum": "1.0",
+          "verified": "1.2.0"
         }
-      ]
-    },
-    "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
-    "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.7/Archive.zip",
-    "scripts": [
-      "scripts/discord-integration.js"
-    ],
-    "socket": true
-  }
+      },
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "1.0",
+          "verified": "2.2.0"
+        }
+      }
+    ]
+  },
+  "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
+  "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.7/Archive.zip",
+  "scripts": ["scripts/discord-integration.js"],
+  "styles": ["styles/style.css"],
+  "socket": true
+}

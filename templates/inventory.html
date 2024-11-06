@@ -1,0 +1,10 @@
+<div class="inventory-container">
+    <h3>Inventory</h3>
+    <ul class="inventory-list">
+      {{#each inventory}}
+        <li>
+          <strong>{{name}}</strong> (x{{quantity}}) - {{#if equipped}}Equipped{{else}}Stored{{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </div>
