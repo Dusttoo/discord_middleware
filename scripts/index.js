@@ -1,27 +1,21 @@
 const MODULE_NAME = "discord-bot-integration";
 console.log(`${MODULE_NAME} module loading...`);
 
-const DiscordBotIntegration = {};
+import { registerHooks } from "./hooks.js";
+import { setupSocket } from "./socket.js";
+import { registerSettings } from "./settings.js";
 
-function debugLog(message, ...optionalParams) {
-  const debugMode = game.settings.get("discord-bot-integration", "debugMode");
-  if (debugMode) {
-    console.log(`[Discord Bot Integration Debug] ${message}`, ...optionalParams);
-  }
-}
+Hooks.once("init", async () => {
+  console.log(`${MODULE_NAME} | Initializing module`);
 
-Hooks.once("init", function () {
-  console.log("Initializing Discord Bot Integration module");
+  registerSettings();
 
-  require("./settings.js").registerSettings();
-
-  game.discordBotIntegration = DiscordBotIntegration;
-
-  console.log(`${MODULE_NAME} initialized.`);
 });
 
 Hooks.once("ready", () => {
-  console.log(`${MODULE_NAME} ready.`);
-  require("./hooks.js").registerHooks(); 
-  require("./socket.js").setupSocket();
+  console.log(`${MODULE_NAME} | Foundry ready, setting up hooks and socket`);
+
+  registerHooks();
+
+  setupSocket();
 });

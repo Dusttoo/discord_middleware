@@ -1,4 +1,4 @@
-module.exports.registerSettings = function registerSettings() {
+export function registerSettings() {
   game.settings.register("discord-bot-integration", "useEnv", {
     name: "Use .env for Development",
     hint: "Enable to load environment variables from a .env file during development.",

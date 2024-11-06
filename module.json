@@ -2,7 +2,7 @@
   "id": "discord-bot-integration",
   "title": "Discord Bot Integration",
   "description": "A module that enables integration with a Discord bot via WebSocket events.",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "compatibility": {
     "minimum": "10.0",
     "verified": "12"
@@ -36,8 +36,8 @@
     ]
   },
   "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
-  "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.10/Archive.zip",
-  "scripts": ["scripts/index.js"],
+  "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.11/Archive.zip",
+  "esmodules": ["dist/main.js"],
   "styles": ["styles/style.css"],
   "socket": true
 }

@@ -1,0 +1,19 @@
+{
+  "name": "discord-bot-integration",
+  "version": "1.0.11",
+  "description": "Discord Bot Integration for Foundry VTT",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.x.x",
+    "@babel/preset-env": "^7.x.x",
+    "babel-loader": "^8.x.x",
+    "webpack": "^5.x.x",
+    "webpack-cli": "^4.x.x"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
