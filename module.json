@@ -1,16 +1,21 @@
 {
-    "name": "discord-bot-integration",
-    "title": "Discord Bot Integration",
-    "description": "A module that enables integration with a Discord bot via WebSocket events.",
-    "version": "1.0.1",
-    "minimumCoreVersion": "10.0",
-    "compatibleCoreVersion": "10.0",
-    "author": "Dusty Mumphrey",
-    "url": "https://github.com/Dusttoo/discord_middleware",
-    "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
-    "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.1/Archive.zip",
-    "scripts": [
-      "scripts/discord-integration.js"
-    ],
-    "socket": true
-  }
+  "name": "discord-bot-integration",
+  "title": "Discord Bot Integration",
+  "description": "A module that enables integration with a Discord bot via WebSocket events.",
+  "version": "1.0.3",
+  "minimumCoreVersion": "10.0",
+  "compatibleCoreVersion": "12.0",
+  "author": "Dusty Mumphrey",
+  "url": "https://github.com/Dusttoo/discord_middleware",
+  "manifest": "https://raw.githubusercontent.com/Dusttoo/discord_middleware/main/module.json",
+  "download": "https://github.com/Dusttoo/discord_middleware/releases/download/v1.0.1/Archive.zip",
+  "scripts": ["scripts/discord-integration.js"],
+  "socket": true,
+  "dependencies": [
+    {
+      "name": "socketlib",
+      "type": "module",
+      "manifest": "https://github.com/fantasycalendar/socketlib/releases/latest/download/module.json"
+    }
+  ]
+}

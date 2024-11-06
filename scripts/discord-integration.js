@@ -1,6 +1,10 @@
 const MODULE_NAME = "discord-bot-integration";
 
+console.log(`${MODULE_NAME} module loading...`); 
+
 Hooks.once("socketlib.ready", () => {
+  console.log(`${MODULE_NAME} socketlib ready`); 
+
   game.socket.on(`module.${MODULE_NAME}`, async (data) => {
     console.log("Received data from Discord bot:", data);
 
