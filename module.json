@@ -2,7 +2,7 @@
   "name": "discord-bot-integration",
   "title": "Discord Bot Integration",
   "description": "A module that enables integration with a Discord bot via WebSocket events.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "minimumCoreVersion": "10.0",
   "compatibleCoreVersion": "12.0",
   "author": "Dusty Mumphrey",
