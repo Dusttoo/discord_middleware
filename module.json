@@ -1,0 +1,16 @@
+{
+    "name": "discord-bot-integration",
+    "title": "Discord Bot Integration",
+    "description": "A module that enables integration with a Discord bot via WebSocket events.",
+    "version": "1.0.0",
+    "minimumCoreVersion": "10.0",
+    "compatibleCoreVersion": "10.0",
+    "author": "Dusty Mumphrey",
+    "url": "https://github.com/yourusername/discord-bot-integration",
+    "manifest": "https://raw.githubusercontent.com/yourusername/discord-bot-integration/main/module.json",
+    "download": "https://github.com/yourusername/discord-bot-integration/releases/download/v1.0.0/discord-bot-integration.zip",
+    "scripts": [
+      "scripts/discord-integration.js"
+    ],
+    "socket": true
+  }
