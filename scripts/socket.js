@@ -2,6 +2,10 @@ import { debugLog } from "./utils/debuggingUtils";
 export function setupSocket() {
   const MODULE_NAME = "discord-bot-integration";
 
+  game.socket.on("broadcast", (data) => {
+    debugLog(`[${MODULE_NAME}] Catch-all Listener: Received event on broadcast socket:`, data);
+  });
+
   game.socket.on(`module.${MODULE_NAME}`, async (data) => {
     debugLog(`Received data from Discord bot:`, data);
     if (Array.isArray(data) && data.length > 1) {
