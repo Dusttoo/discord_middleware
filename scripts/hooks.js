@@ -1,9 +1,9 @@
+import { debugLog } from "./utils/debuggingUtils";
 export function registerHooks() {
     const MODULE_NAME = "discord-bot-integration";
   
-    // Actor Updates (e.g., HP, Inventory)
     Hooks.on("updateActor", (actor, data, options, userId) => {
-      console.log(`Actor updated: ${actor.name}`);
+      debugLog(`Actor updated: ${actor.name}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "actorUpdated",
         actorId: actor.id,
@@ -11,11 +11,11 @@ export function registerHooks() {
       });
     });
   
-    // Actor Item Updates (Inventory or Equipment changes)
     Hooks.on("createItem", (item, options, userId) => {
+      debugLog(`Item created: ${item.name}`);
       const actor = item.parent;
       if (actor) {
-        console.log(`Item added to ${actor.name}'s inventory: ${item.name}`);
+        debugLog(`Item added to ${actor.name}'s inventory: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "itemAdded",
           actorId: actor.id,
@@ -25,9 +25,10 @@ export function registerHooks() {
     });
   
     Hooks.on("deleteItem", (item, options, userId) => {
+      debugLog(`Item deleted: ${item.name}`);
       const actor = item.parent;
       if (actor) {
-        console.log(`Item removed from ${actor.name}'s inventory: ${item.name}`);
+        debugLog(`Item removed from ${actor.name}'s inventory: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "itemRemoved",
           actorId: actor.id,
@@ -36,9 +37,8 @@ export function registerHooks() {
       }
     });
   
-    // Combat Tracking Hooks (e.g., Initiative, Turn Tracking)
     Hooks.on("updateCombat", (combat, data, options, userId) => {
-      console.log(`Combat updated: Combat ID ${combat.id}`);
+      debugLog(`Combat updated: Combat ID ${combat.id}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "combatUpdated",
         combatants: combat.combatants.map(c => ({
@@ -49,11 +49,11 @@ export function registerHooks() {
       });
     });
   
-    // Combat Turn Notification
     Hooks.on("combatTurn", (combat, turnData) => {
+      debugLog(`Combat turn: ${turnData.turn}`);
       const currentCombatant = combat.combatant;
       if (currentCombatant) {
-        console.log(`Turn notification for: ${currentCombatant.actor.name}`);
+        debugLog(`Turn notification for: ${currentCombatant.actor.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "turnNotification",
           combatantName: currentCombatant.actor.name,
@@ -62,21 +62,20 @@ export function registerHooks() {
       }
     });
   
-    // Chat Message Relay
     Hooks.on("createChatMessage", (chatMessage, options, userId) => {
       const message = chatMessage.data.content;
-      console.log(`Relaying message to Discord: ${message}`);
+      debugLog(`Relaying message to Discord: ${message}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "chatRelayToDiscord",
         message,
       });
     });
   
-    // Spell and Ability Usage
     Hooks.on("useItem", (item, options) => {
+      debugLog(`Item used: ${item.name}`);
       const actor = item.actor;
       if (actor && (item.type === "spell" || item.type === "feat")) {
-        console.log(`Spell or ability used: ${item.name}`);
+        debugLog(`Spell or ability used: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: item.type === "spell" ? "spellUsed" : "abilityUsed",
           casterName: actor.name,
@@ -86,10 +85,10 @@ export function registerHooks() {
       }
     });
   
-    // Long Rest and Short Rest Hooks
     Hooks.on("restComplete", (actor, restData) => {
+      debugLog(`Rest completed: ${actor.name}`);
       const restType = restData.longRest ? "longRest" : "shortRest";
-      console.log(`${actor.name} completed a ${restType}`);
+      debugLog(`${actor.name} completed a ${restType}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: restType,
         actorId: actor.id,

@@ -1,136 +1,180 @@
+import { debugLog } from "./utils/debuggingUtils";
 export function setupSocket() {
   const MODULE_NAME = "discord-bot-integration";
 
   game.socket.on(`module.${MODULE_NAME}`, async (data) => {
     debugLog(`Received data from Discord bot:`, data);
-
-    const { action, actorId, requestId } = data;
-
-    switch (action) {
-      case "getCharacterStats":
-        const stats = await getCharacterStats(actorId);
-        game.socket.emit(`module.discord-bot-integration`, {
-          action: "characterStats",
-          requestId,
-          stats,
-        });
-        break;
-      case "getCharacterInventory":
-        const inventory = await getCharacterInventory(actorId);
-        game.socket.emit(`module.discord-bot-integration`, {
-          action: "characterInventory",
-          requestId,
-          inventory,
-        });
-        break;
-      case "getCharacterSpells":
-        await sendCharacterSpells(actorId, requestId);
-        break;
-      case "updateCharacterHP":
-        const hpChange = payload.hpChange;
-        await updateCharacterHP(actorId, hpChange, requestId);
-        game.socket.emit(`module.discord-bot-integration`, {
-          action: "characterHPUpdated",
-          requestId,
-          newHP,
-        });
-        break;
-      case "updateCharacterCondition":
-        await updateCharacterCondition(
-          actorId,
-          payload.condition,
-          payload.add,
-          requestId
-        );
-        break;
-      case "updateResource":
-        await updateResource(
-          actorId,
-          payload.resourceName,
-          payload.value,
-          requestId
-        );
-        break;
-      case "addItemToInventory":
-        await addItemToInventory(actorId, payload.itemData, requestId);
-        break;
-      case "removeItemFromInventory":
-        await removeItemFromInventory(actorId, payload.itemId, requestId);
-        break;
-      case "getItemDetails":
-        await getItemDetails(actorId, payload.itemId, requestId);
-        break;
-      case "rollInitiative":
-        await rollInitiative(actorId, requestId);
-        game.socket.emit(`module.discord-bot-integration`, {
-          action: "initiativeRolled",
-          requestId,
-          actorName: actor.name,
-          initiative: actor.initiative,
-        });
-        break;
-      case "turnNotification":
-        await sendTurnNotification(requestId);
-        break;
-      case "combatSummary":
-        await sendCombatSummary(requestId);
-        break;
-      case "rollAttack":
-        await rollAttack(actorId, payload.attackData, requestId);
-        break;
-      case "rollSavingThrow":
-        await rollSavingThrow(actorId, payload.saveType, requestId);
-        break;
-      case "applyDamageOrHealing":
-        await applyDamageOrHealing(actorId, payload.amount, requestId);
-        break;
-      case "rollOnTable":
-        await rollOnTable(tableId, requestId);
-        break;
-      case "generateEncounter":
-        await generateRandomEncounter(encounterType, requestId);
-        break;
-      case "relayChatToDiscord":
-        await relayChatToDiscord(message, requestId);
-        break;
-      case "relayRPCommand":
-        await relayRPCommand(characterId, message, requestId);
-        break;
-      case "castSpell":
-        await castSpell(casterId, spellId, targetId, requestId);
-        break;
-      case "useAbility":
-        await useAbility(casterId, abilityId, targetId, requestId);
-        break;
-      case "viewQuestLog":
-        await viewQuestLog(requestId);
-        break;
-      case "addNote":
-        await addNoteToLog(questId, note, requestId);
-        break;
-      case "queryNpcStats":
-        await queryNpcStats(npcId, requestId);
-        break;
-      case "generateRandomNpc":
-        await generateRandomNpc(requestId);
-        break;
-      case "longRest":
-        await handleLongRest(characterId, requestId);
-        break;
-      case "shortRest":
-        await handleShortRest(characterId, requestId);
-        break;
-      case "startSession":
-        await handleSessionStart(sessionData, requestId);
-        break;
-      case "endSession":
-        await handleSessionEnd(sessionData, requestId);
-        break;
-      case "logSessionNotes":
-        await handleLogSessionNotes(logData, requestId);
-        break;
-      default:
-        console.warn(`Unknown action: ${action}`);
+    if (Array.isArray(data) && data.length > 1) {
+      const moduleName = data[0];
+      const payload = data[1];
+      debugLog(`Received data from Discord bot:`, moduleName, payload);
+      if (moduleName === `module.${MODULE_NAME}` && payload) {
+        const { action, actorId, requestId } = payload;
+        switch (action) {
+          case "getCharacterStats":
+            debugLog(`getCharacterStats:`, actorId);
+            const stats = await getCharacterStats(actorId);
+            game.socket.emit(`module.discord-bot-integration`, {
+              action: "characterStats",
+              requestId,
+              stats,
+            });
+            break;
+          case "getCharacterInventory":
+            debugLog(`getCharacterInventory:`, actorId);
+            const inventory = await getCharacterInventory(actorId);
+            game.socket.emit(`module.discord-bot-integration`, {
+              action: "characterInventory",
+              requestId,
+              inventory,
+            });
+            break;
+          case "getCharacterSpells":
+            debugLog(`getCharacterSpells:`, actorId);
+            await sendCharacterSpells(actorId, requestId);
+            break;
+          case "updateCharacterHP":
+            debugLog(`updateCharacterHP:`, actorId);
+            const hpChange = payload.hpChange;
+            await updateCharacterHP(actorId, hpChange, requestId);
+            game.socket.emit(`module.discord-bot-integration`, {
+              action: "characterHPUpdated",
+              requestId,
+              newHP,
+            });
+            break;
+          case "updateCharacterCondition":
+            debugLog(`updateCharacterCondition:`, actorId);
+            await updateCharacterCondition(
+              actorId,
+              payload.condition,
+              payload.add,
+              requestId
+            );
+            break;
+          case "updateResource":
+            debugLog(`updateResource:`, actorId);
+            await updateResource(
+              actorId,
+              payload.resourceName,
+              payload.value,
+              requestId
+            );
+            break;
+          case "addItemToInventory":
+            debugLog(`addItemToInventory:`, actorId);
+            await addItemToInventory(actorId, payload.itemData, requestId);
+            break;
+          case "removeItemFromInventory":
+            debugLog(`removeItemFromInventory:`, actorId);
+            await removeItemFromInventory(actorId, payload.itemId, requestId);
+            break;
+          case "getItemDetails":
+            debugLog(`getItemDetails:`, actorId);
+            await getItemDetails(actorId, payload.itemId, requestId);
+            break;
+          case "rollInitiative":
+            debugLog(`rollInitiative:`, actorId);
+            await rollInitiative(actorId, requestId);
+            game.socket.emit(`module.discord-bot-integration`, {
+              action: "initiativeRolled",
+              requestId,
+              actorName: actor.name,
+              initiative: actor.initiative,
+            });
+            break;
+          case "turnNotification":
+            debugLog(`turnNotification:`, actorId);
+            await sendTurnNotification(requestId);
+            break;
+          case "combatSummary":
+            debugLog(`combatSummary:`, actorId);
+            await sendCombatSummary(requestId);
+            break;
+          case "rollAttack":
+            debugLog(`rollAttack:`, actorId);
+            await rollAttack(actorId, payload.attackData, requestId);
+            break;
+          case "rollSavingThrow":
+            debugLog(`rollSavingThrow:`, actorId);
+            await rollSavingThrow(actorId, payload.saveType, requestId);
+            break;
+          case "applyDamageOrHealing":
+            debugLog(`applyDamageOrHealing:`, actorId);
+            await applyDamageOrHealing(actorId, payload.amount, requestId);
+            break;
+          case "rollOnTable":
+            debugLog(`rollOnTable:`, actorId);
+            await rollOnTable(tableId, requestId);
+            break;
+          case "generateEncounter":
+            debugLog(`generateEncounter:`, actorId);
+            await generateRandomEncounter(encounterType, requestId);
+            break;
+          case "relayChatToDiscord":
+            debugLog(`relayChatToDiscord:`, actorId, payload.message);
+            await relayChatToDiscord(message, requestId);
+            break;
+          case "relayRPCommand":
+            debugLog(`relayRPCommand:`, actorId, payload.message);
+            await relayRPCommand(characterId, message, requestId);
+            break;
+          case "castSpell":
+            debugLog(`castSpell:`, actorId, payload.spellId, payload.targetId);
+            await castSpell(casterId, spellId, targetId, requestId);
+            break;
+          case "useAbility":
+            debugLog(
+              `useAbility:`,
+              actorId,
+              payload.abilityId,
+              payload.targetId
+            );
+            await useAbility(casterId, abilityId, targetId, requestId);
+            break;
+          case "viewQuestLog":
+            debugLog(`viewQuestLog:`, actorId);
+            await viewQuestLog(requestId);
+            break;
+          case "addNote":
+            debugLog(`addNote:`, actorId, payload.note);
+            await addNoteToLog(questId, note, requestId);
+            break;
+          case "queryNpcStats":
+            debugLog(`queryNpcStats:`, actorId, payload.npcId);
+            await queryNpcStats(npcId, requestId);
+            break;
+          case "generateRandomNpc":
+            debugLog(`generateRandomNpc:`, actorId);
+            await generateRandomNpc(requestId);
+            break;
+          case "longRest":
+            debugLog(`longRest:`, actorId);
+            await handleLongRest(characterId, requestId);
+            break;
+          case "shortRest":
+            debugLog(`shortRest:`, actorId);
+            await handleShortRest(characterId, requestId);
+            break;
+          case "startSession":
+            debugLog(`startSession:`, actorId);
+            await handleSessionStart(sessionData, requestId);
+            break;
+          case "endSession":
+            debugLog(`endSession:`, actorId);
+            await handleSessionEnd(sessionData, requestId);
+            break;
+          case "logSessionNotes":
+            debugLog(`logSessionNotes:`, actorId);
+            await handleLogSessionNotes(logData, requestId);
+            break;
+          default:
+            debugLog(`Unknown action: ${action}`);
+            console.warn(`Unknown action: ${action}`);
+        }
+      }
+    } else {
+      console.warn("Received data in unexpected format:", data);
     }
   });
 }
@@ -138,6 +182,7 @@ export function setupSocket() {
 async function sendCharacterSpells(actorId, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
@@ -151,6 +196,8 @@ async function sendCharacterSpells(actorId, requestId) {
       uses: spell.system.uses,
     }));
 
+  debugLog(`sendCharacterSpells:`, actorId, spells);
+
   game.socket.emit(`module.discord-bot-integration`, {
     action: "characterSpells",
     requestId,
@@ -161,15 +208,17 @@ async function sendCharacterSpells(actorId, requestId) {
 async function updateCharacterHP(actorId, hpChange, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
   const currentHP = actor.system.attributes.hp.value;
-  const newHP = Math.max(0, currentHP + hpChange); // Prevent HP from dropping below 0
+  const newHP = Math.max(0, currentHP + hpChange);
 
   await actor.update({ "system.attributes.hp.value": newHP });
 
+  debugLog(`updateCharacterHP:`, actorId, newHP);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "characterHPUpdated",
     requestId,
@@ -177,10 +226,10 @@ async function updateCharacterHP(actorId, hpChange, requestId) {
   });
 }
 
-// 2. Update Character Condition
 async function updateCharacterCondition(actorId, condition, add, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
@@ -190,13 +239,14 @@ async function updateCharacterCondition(actorId, condition, add, requestId) {
 
   if (add && !conditionExists) {
     await actor.createEmbeddedDocuments("ActiveEffect", [
-      { label: condition, icon: "icons/svg/status/poison.svg" }, // Example icon, customize as needed
+      { label: condition, icon: "icons/svg/status/poison.svg" },
     ]);
   } else if (!add && conditionExists) {
     const effect = actor.effects.find((e) => e.label === condition);
     await effect.delete();
   }
 
+  debugLog(`updateCharacterCondition:`, actorId, condition, add);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "characterConditionUpdated",
     requestId,
@@ -205,10 +255,10 @@ async function updateCharacterCondition(actorId, condition, add, requestId) {
   });
 }
 
-// 3. Update Resource (e.g., Spell Slots, Ability Uses)
 async function updateResource(actorId, resourceName, value, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
@@ -221,6 +271,8 @@ async function updateResource(actorId, resourceName, value, requestId) {
     return;
   }
 
+  debugLog(`updateResource:`, actorId, resourceName, value);
+
   game.socket.emit(`module.discord-bot-integration`, {
     action: "characterResourceUpdated",
     requestId,
@@ -232,11 +284,13 @@ async function updateResource(actorId, resourceName, value, requestId) {
 async function addItemToInventory(actorId, itemData, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
   const item = await actor.createEmbeddedDocuments("Item", [itemData]);
+  debugLog(`addItemToInventory:`, actorId, item[0].id);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "itemAddedToInventory",
     requestId,
@@ -245,10 +299,10 @@ async function addItemToInventory(actorId, itemData, requestId) {
   });
 }
 
-// 2. Remove Item from Inventory
 async function removeItemFromInventory(actorId, itemId, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
@@ -260,6 +314,8 @@ async function removeItemFromInventory(actorId, itemId, requestId) {
   }
 
   await item.delete();
+
+  debugLog(`removeItemFromInventory:`, actorId, itemId);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "itemRemovedFromInventory",
     requestId,
@@ -268,10 +324,10 @@ async function removeItemFromInventory(actorId, itemId, requestId) {
   });
 }
 
-// 3. Get Item Details
 async function getItemDetails(actorId, itemId, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
@@ -282,6 +338,7 @@ async function getItemDetails(actorId, itemId, requestId) {
     return;
   }
 
+  debugLog(`getItemDetails:`, actorId, itemId);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "itemDetails",
     requestId,
@@ -298,12 +355,14 @@ async function getItemDetails(actorId, itemId, requestId) {
 async function rollInitiative(actorId, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
-  // Roll initiative for the actor
   await actor.rollInitiative();
+
+  debugLog(`rollInitiative:`, actorId);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "initiativeRolled",
     requestId,
@@ -312,15 +371,16 @@ async function rollInitiative(actorId, requestId) {
   });
 }
 
-// 2. Send Turn Notification
 async function sendTurnNotification(requestId) {
   const combat = game.combats.active;
   if (!combat) {
+    debugLog("No active combat found");
     console.warn("No active combat found");
     return;
   }
   const currentCombatant = combat.combatant;
   renderTurnNotification(currentCombatant.actor);
+  debugLog("sendTurnNotification:", currentCombatant.actor.name);
   if (currentCombatant) {
     game.socket.emit(`module.discord-bot-integration`, {
       action: "turnNotification",
@@ -331,10 +391,10 @@ async function sendTurnNotification(requestId) {
   }
 }
 
-// 3. Send Combat Summary
 async function sendCombatSummary(requestId) {
   const combat = game.combats.active;
   if (!combat) {
+    debugLog("No active combat found");
     console.warn("No active combat found");
     return;
   }
@@ -344,6 +404,8 @@ async function sendCombatSummary(requestId) {
     initiative: combatant.initiative,
     id: combatant.actor.id,
   }));
+
+  debugLog("sendCombatSummary:", combatants);
 
   game.socket.emit(`module.discord-bot-integration`, {
     action: "combatSummary",
@@ -355,19 +417,18 @@ async function sendCombatSummary(requestId) {
 async function rollAttack(actorId, attackData, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
-  // Roll the attack
   const attackRoll = new Roll(attackData.attackFormula).roll({ async: true });
   const damageRoll = new Roll(attackData.damageFormula).roll({ async: true });
 
-  // Apply attack result and damage
   await attackRoll.toMessage({ flavor: `${actor.name} makes an attack!` });
   await damageRoll.toMessage({ flavor: `${actor.name} deals damage!` });
 
-  // Send results back to Discord
+  debugLog(`rollAttack:`, actorId, attackRoll.total, damageRoll.total);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "attackResult",
     requestId,
@@ -377,15 +438,17 @@ async function rollAttack(actorId, attackData, requestId) {
   });
 }
 
-// 2. Roll Saving Throw or Ability Check
 async function rollSavingThrow(actorId, saveType, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
   const roll = await actor.rollAbilitySave(saveType);
+
+  debugLog(`rollSavingThrow:`, actorId, saveType, roll.total);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "savingThrowResult",
     requestId,
@@ -395,20 +458,19 @@ async function rollSavingThrow(actorId, saveType, requestId) {
   });
 }
 
-// 3. Auto-Apply Damage or Healing
 async function applyDamageOrHealing(actorId, amount, requestId) {
   const actor = game.actors.get(actorId);
   if (!actor) {
+    debugLog(`Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
     return;
   }
 
-  // Adjust the actor's HP based on the amount
   const currentHP = actor.system.attributes.hp.value;
   const newHP = Math.max(0, currentHP + amount);
   await actor.update({ "system.attributes.hp.value": newHP });
 
-  // Emit the result back to Discord
+  debugLog(`applyDamageOrHealing:`, actorId, newHP);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "hpUpdated",
     requestId,
@@ -420,15 +482,15 @@ async function applyDamageOrHealing(actorId, amount, requestId) {
 async function rollOnTable(tableId, requestId) {
   const table = game.tables.get(tableId);
   if (!table) {
+    debugLog(`Table with ID ${tableId} not found`);
     console.warn(`Table with ID ${tableId} not found`);
     return;
   }
 
-  // Roll on the table
   const rollResult = await table.draw();
   const resultText = rollResult.results.map((r) => r.getChatText()).join(", ");
 
-  // Emit result back to Discord
+  debugLog(`rollOnTable:`, tableId, resultText);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "tableRollResult",
     requestId,
@@ -437,23 +499,20 @@ async function rollOnTable(tableId, requestId) {
   });
 }
 
-// 2. Random Encounter Generator
 async function generateRandomEncounter(encounterType, requestId) {
-  // Define a simple encounter generator with different types of encounters
   const encounters = {
     forest: ["Wolf", "Goblin Scout", "Bandit"],
     dungeon: ["Skeleton", "Zombie", "Giant Spider"],
     town: ["Thief", "Guard Patrol", "Pickpocket"],
   };
 
-  // Select a random encounter from the specified type
   const encounterList = encounters[encounterType] || [];
   const randomEncounter =
     encounterList.length > 0
       ? encounterList[Math.floor(Math.random() * encounterList.length)]
       : "Nothing found";
 
-  // Emit the encounter back to Discord
+  debugLog(`generateRandomEncounter:`, encounterType, randomEncounter);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "randomEncounterResult",
     requestId,
@@ -463,10 +522,8 @@ async function generateRandomEncounter(encounterType, requestId) {
 }
 
 async function relayChatToDiscord(message, requestId) {
-  // Assuming `message` is a text message from Foundry's in-game chat
   debugLog(`Relaying message to Discord: ${message}`);
 
-  // Emit message to the Discord bot via the socket
   game.socket.emit(`module.discord-bot-integration`, {
     action: "chatRelayToDiscord",
     requestId,
@@ -474,22 +531,21 @@ async function relayChatToDiscord(message, requestId) {
   });
 }
 
-// 2. Character Quotes or RP Commands
 async function relayRPCommand(characterId, message, requestId) {
   const character = game.actors.get(characterId);
   if (!character) {
+    debugLog(`Character with ID ${characterId} not found`);
     console.warn(`Character with ID ${characterId} not found`);
     return;
   }
 
-  // Format message as if the character is speaking in Foundry's chat
   const formattedMessage = `<strong>${character.name}</strong>: ${message}`;
   ChatMessage.create({
     content: formattedMessage,
     speaker: { actor: character },
   });
 
-  // Optionally, relay to Discord
+  debugLog(`Relaying message to Discord: ${message}`);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "rpCommandRelay",
     requestId,
@@ -501,12 +557,14 @@ async function relayRPCommand(characterId, message, requestId) {
 async function castSpell(casterId, spellId, targetId, requestId) {
   const caster = game.actors.get(casterId);
   if (!caster) {
+    debugLog(`Caster with ID ${casterId} not found`);
     console.warn(`Caster with ID ${casterId} not found`);
     return;
   }
 
   const spell = caster.items.get(spellId);
   if (!spell || spell.type !== "spell") {
+    debugLog(`Spell with ID ${spellId} not found or is not a spell`);
     console.warn(`Spell with ID ${spellId} not found or is not a spell`);
     return;
   }
@@ -515,7 +573,6 @@ async function castSpell(casterId, spellId, targetId, requestId) {
   const spellDescription =
     spell.system.description.value || "No description available";
 
-  // Log the spell casting in Foundry chat
   ChatMessage.create({
     content: `<strong>${caster.name}</strong> casts <strong>${
       spell.name
@@ -525,7 +582,7 @@ async function castSpell(casterId, spellId, targetId, requestId) {
     speaker: { actor: caster },
   });
 
-  // Emit to Discord for notification
+  debugLog(`castSpell:`, casterId, spellId, targetId);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "spellCastNotification",
     requestId,
@@ -535,19 +592,17 @@ async function castSpell(casterId, spellId, targetId, requestId) {
     description: spellDescription,
   });
 
-  // Apply spell effects, such as healing or conditions
   applySpellEffects(spell, caster, target);
 }
 
-// Apply spell effects to the target (e.g., healing, conditions)
 async function applySpellEffects(spell, caster, target) {
   if (!target) return;
 
-  // Example: If the spell is a healing spell, add HP to target
   if (
     spell.system.damage &&
     spell.system.damage.parts.some((part) => part[1] === "healing")
   ) {
+    debugLog(`applySpellEffects:`, spell, caster, target);
     const healingAmount = calculateSpellEffect(spell);
     target.update({
       "system.attributes.hp.value": Math.min(
@@ -556,27 +611,25 @@ async function applySpellEffects(spell, caster, target) {
       ),
     });
 
-    // Notify the bot about the healing effect
     game.socket.emit(`module.discord-bot-integration`, {
       action: "spellEffectApplied",
       casterName: caster.name,
       effect: `heals ${target.name} for ${healingAmount} HP`,
     });
   }
-
-  // Additional effects like conditions (e.g., poisoned, stunned) can be added similarly
 }
 
-// 2. Use Abilities
 async function useAbility(casterId, abilityId, targetId, requestId) {
   const caster = game.actors.get(casterId);
   if (!caster) {
+    debugLog(`Caster with ID ${casterId} not found`);
     console.warn(`Caster with ID ${casterId} not found`);
     return;
   }
 
   const ability = caster.items.get(abilityId);
   if (!ability || ability.type !== "feat") {
+    debugLog(`Ability with ID ${abilityId} not found or is not an ability`);
     console.warn(`Ability with ID ${abilityId} not found or is not an ability`);
     return;
   }
@@ -585,7 +638,7 @@ async function useAbility(casterId, abilityId, targetId, requestId) {
   const abilityDescription =
     ability.system.description.value || "No description available";
 
-  // Log the ability usage in Foundry chat
+  debugLog(`useAbility:`, casterId, abilityId, targetId);
   ChatMessage.create({
     content: `<strong>${caster.name}</strong> uses <strong>${
       ability.name
@@ -595,7 +648,6 @@ async function useAbility(casterId, abilityId, targetId, requestId) {
     speaker: { actor: caster },
   });
 
-  // Emit to Discord for notification
   game.socket.emit(`module.discord-bot-integration`, {
     action: "abilityUseNotification",
     requestId,
@@ -604,21 +656,20 @@ async function useAbility(casterId, abilityId, targetId, requestId) {
     targetName: target ? target.name : "Unknown Target",
     description: abilityDescription,
   });
-
-  // If the ability has effects (like conditions), apply them here
 }
 
-// Helper function to calculate spell effects, like healing amount
 function calculateSpellEffect(spell) {
-  // Simplified example of effect calculation, replace with actual logic as needed
   const damagePart = spell.system.damage.parts.find(
     (part) => part[1] === "healing"
   );
+  debugLog(`calculateSpellEffect:`, spell, damagePart);
   if (damagePart) {
     const formula = damagePart[0];
     const roll = new Roll(formula).evaluate({ async: false });
+    debugLog(`calculateSpellEffect:`, roll.total);
     return roll.total;
   }
+  debugLog("No healing part found in spell", spell);
   return 0;
 }
 
@@ -626,13 +677,13 @@ async function viewQuestLog(requestId) {
   const quests = game.journal.contents.filter(
     (entry) => entry.flags.questLog === true
   );
+  debugLog(`viewQuestLogQuests:`, quests);
   const questData = quests.map((quest) => ({
     title: quest.name,
-    content: quest.data.content, // Summary or details of the quest
-    status: quest.flags.status || "In Progress", // Custom status flag for quests
+    content: quest.data.content,
+    status: quest.flags.status || "In Progress",
   }));
-
-  // Format the quest log for Discord output
+  debugLog(`viewQuestLogQuestData:`, questData);
   const questSummary = questData
     .map(
       (quest) =>
@@ -640,7 +691,7 @@ async function viewQuestLog(requestId) {
     )
     .join("\n---\n");
 
-  // Emit the quest log data to Discord
+  debugLog(`viewQuestLogQuestSummary:`, questSummary);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "questLogResponse",
     requestId,
@@ -648,19 +699,18 @@ async function viewQuestLog(requestId) {
   });
 }
 
-// 2. Add Note to Log
 async function addNoteToLog(questId, note, requestId) {
   const quest = game.journal.get(questId);
   if (!quest) {
+    debugLog(`Quest with ID ${questId} not found`);
     console.warn(`Quest with ID ${questId} not found`);
     return;
   }
 
-  // Append the new note to the quest content
   const updatedContent = quest.data.content + `\n\n**Note:** ${note}`;
   await quest.update({ content: updatedContent });
 
-  // Emit a response back to Discord to confirm note addition
+  debugLog(`addNoteToLog:`, quest, updatedContent);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "noteAddedConfirmation",
     requestId,
@@ -672,11 +722,11 @@ async function addNoteToLog(questId, note, requestId) {
 async function queryNpcStats(npcId, requestId) {
   const npc = game.actors.get(npcId);
   if (!npc) {
+    debugLog(`NPC with ID ${npcId} not found`);
     console.warn(`NPC with ID ${npcId} not found`);
     return;
   }
 
-  // Format NPC stats for display
   const npcStats = {
     name: npc.name,
     hp: npc.system.attributes.hp.value,
@@ -691,7 +741,8 @@ async function queryNpcStats(npcId, requestId) {
     },
   };
 
-  // Format the data for a response in Discord
+  debugLog(`queryNpcStats:`, npcStats);
+
   const npcSummary = `
   **${npcStats.name}**\n
   HP: ${npcStats.hp}, AC: ${npcStats.ac}\n
@@ -699,7 +750,6 @@ async function queryNpcStats(npcId, requestId) {
   INT: ${npcStats.abilities.int}, WIS: ${npcStats.abilities.wis}, CHA: ${npcStats.abilities.cha}
   `;
 
-  // Emit the NPC stats back to Discord
   game.socket.emit(`module.discord-bot-integration`, {
     action: "npcStatsResponse",
     requestId,
@@ -707,19 +757,16 @@ async function queryNpcStats(npcId, requestId) {
   });
 }
 
-// 2. Generate Random NPC or Monster
 async function generateRandomNpc(requestId) {
-  // Generate a random NPC or monster template
-  const randomNpc = await createRandomNpc(); // Helper function
-
-  // Format random NPC data for display
+  const randomNpc = await createRandomNpc();
+  debugLog(`generateRandomNpc:`, randomNpc);
   const randomNpcSummary = `
   **Name**: ${randomNpc.name}\n
   HP: ${randomNpc.hp}, AC: ${randomNpc.ac}\n
   Abilities: STR ${randomNpc.str}, DEX ${randomNpc.dex}, CON ${randomNpc.con}, INT ${randomNpc.int}, WIS ${randomNpc.wis}, CHA ${randomNpc.cha}
   `;
 
-  // Emit the generated NPC/monster back to Discord
+  debugLog(`generateRandomNpcSummary:`, randomNpcSummary);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "randomNpcResponse",
     requestId,
@@ -727,9 +774,7 @@ async function generateRandomNpc(requestId) {
   });
 }
 
-// Helper function to create a random NPC
 async function createRandomNpc() {
-  // Simple mock function to create NPC with randomized attributes
   const names = ["Orc Warrior", "Goblin Shaman", "Bandit Leader", "Dire Wolf"];
   const name = names[Math.floor(Math.random() * names.length)];
   const hp = Math.floor(Math.random() * 30) + 20;
@@ -742,6 +787,7 @@ async function createRandomNpc() {
     wis: Math.floor(Math.random() * 8) + 8,
     cha: Math.floor(Math.random() * 8) + 8,
   };
+  debugLog(`createRandomNpc:`, name, hp, ac, abilities);
 
   return {
     name,
@@ -754,21 +800,20 @@ async function createRandomNpc() {
 async function handleLongRest(characterId, requestId) {
   const character = game.actors.get(characterId);
   if (!character) {
+    debugLog(`Character with ID ${characterId} not found`);
     console.warn(`Character with ID ${characterId} not found`);
     return;
   }
 
-  // Perform long rest - restore HP, spell slots, and other resources
-  await character.longRest(); // Foundry VTT API for performing a long rest
+  await character.longRest();
 
-  // Notify players of the rest effects
   const restSummary = `
   **${character.name} has completed a Long Rest**\n
   HP fully restored to ${character.system.attributes.hp.value}/${character.system.attributes.hp.max}\n
   All spell slots and abilities are refreshed.
   `;
 
-  // Emit the rest summary back to Discord
+  debugLog(`handleLongRest:`, restSummary);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "restNotification",
     requestId,
@@ -776,24 +821,22 @@ async function handleLongRest(characterId, requestId) {
   });
 }
 
-// 2. Handle Short Rest
 async function handleShortRest(characterId, requestId) {
   const character = game.actors.get(characterId);
   if (!character) {
+    debugLog(`Character with ID ${characterId} not found`);
     console.warn(`Character with ID ${characterId} not found`);
     return;
   }
 
-  // Perform short rest - restore limited resources
-  await character.shortRest(); // Foundry VTT API for performing a short rest
+  await character.shortRest();
 
-  // Notify players of the rest effects
   const restSummary = `
   **${character.name} has completed a Short Rest**\n
   HP partially restored based on hit dice. Check abilities and spells for partial recovery.
   `;
 
-  // Emit the rest summary back to Discord
+  debugLog(`handleShortRest:`, restSummary);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "restNotification",
     requestId,
@@ -805,6 +848,7 @@ async function handleSessionStart(sessionData, requestId) {
   const { sessionTitle, participants } = sessionData;
   const startTime = new Date().toLocaleString();
 
+  debugLog(`handleSessionStart:`, sessionTitle, startTime, participants);
   const startMessage = `
   **Session Started: ${sessionTitle}**
   Start Time: ${startTime}
@@ -812,7 +856,7 @@ async function handleSessionStart(sessionData, requestId) {
   Good luck and enjoy the adventure!
     `;
 
-  // Emit start message back to Discord
+  debugLog(`startMessage:`, startMessage);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "sessionNotification",
     requestId,
@@ -821,18 +865,19 @@ async function handleSessionStart(sessionData, requestId) {
   });
 }
 
-// 2. Handle Session End
 async function handleSessionEnd(sessionData, requestId) {
   const { sessionTitle } = sessionData;
   const endTime = new Date().toLocaleString();
 
+  debugLog(`handleSessionEnd:`, sessionTitle, endTime);
   const endMessage = `
   **Session Ended: ${sessionTitle}**
   End Time: ${endTime}
   Thank you for playing. See you next time!
     `;
 
-  // Emit end message back to Discord
+  debugLog(`endMessage:`, endMessage);
+
   game.socket.emit(`module.discord-bot-integration`, {
     action: "sessionNotification",
     requestId,
@@ -841,16 +886,16 @@ async function handleSessionEnd(sessionData, requestId) {
   });
 }
 
-// 3. Handle Log Session Notes
 async function handleLogSessionNotes(logData, requestId) {
   const { sessionTitle, notes } = logData;
 
+  debugLog(`handleLogSessionNotes:`, sessionTitle, notes);
   const notesMessage = `
   **Session Notes for ${sessionTitle}:**
   ${notes}
     `;
 
-  // Emit session notes to Discord
+  debugLog(`notesMessage:`, notesMessage);
   game.socket.emit(`module.discord-bot-integration`, {
     action: "sessionNotification",
     requestId,
