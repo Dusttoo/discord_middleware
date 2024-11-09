@@ -8,10 +8,7 @@ module.exports = {
   },
   resolve: {
     extensions: [".js"],
-    fallback: {
-      path: false,
-      os: false,
-      crypto: false,
+    fallback: {"assert": false 
     },
   },
   module: {
@@ -32,4 +29,6 @@ module.exports = {
     dotenv: "commonjs dotenv",  
   },
   mode: "production", 
+  devtool: "source-map",
+  watch: true,
 };

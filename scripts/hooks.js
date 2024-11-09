@@ -1,9 +1,9 @@
+import { MODULE_NAME } from "./index.js";
 import { debugLog } from "./utils/debuggingUtils";
 export function registerHooks() {
-    const MODULE_NAME = "discord-bot-integration";
   
     Hooks.on("updateActor", (actor, data, options, userId) => {
-      debugLog(`Actor updated: ${actor.name}`);
+      debugLog(`${MODULE_NAME} | Actor updated: ${actor.name}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "actorUpdated",
         actorId: actor.id,
@@ -12,10 +12,10 @@ export function registerHooks() {
     });
   
     Hooks.on("createItem", (item, options, userId) => {
-      debugLog(`Item created: ${item.name}`);
+      debugLog(`${MODULE_NAME} | Item created: ${item.name}`);
       const actor = item.parent;
       if (actor) {
-        debugLog(`Item added to ${actor.name}'s inventory: ${item.name}`);
+        debugLog(`${MODULE_NAME} | Item added to ${actor.name}'s inventory: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "itemAdded",
           actorId: actor.id,
@@ -25,10 +25,10 @@ export function registerHooks() {
     });
   
     Hooks.on("deleteItem", (item, options, userId) => {
-      debugLog(`Item deleted: ${item.name}`);
+      debugLog(`${MODULE_NAME} | Item deleted: ${item.name}`);
       const actor = item.parent;
       if (actor) {
-        debugLog(`Item removed from ${actor.name}'s inventory: ${item.name}`);
+        debugLog(`${MODULE_NAME} | Item removed from ${actor.name}'s inventory: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "itemRemoved",
           actorId: actor.id,
@@ -38,33 +38,44 @@ export function registerHooks() {
     });
   
     Hooks.on("updateCombat", (combat, data, options, userId) => {
-      debugLog(`Combat updated: Combat ID ${combat.id}`);
+      const combatantsData = combat.combatants.map((combatant) => ({
+        id: combatant.id,
+        name: combatant.name,
+        initiative: combatant.initiative,
+        hp: combatant.actor?.system.attributes.hp.value, 
+        statusEffects: combatant.actor?.effects.map(effect => effect.label), 
+      }));
+      debugLog(`${MODULE_NAME} | Combat updated: Combat ID ${combat.id}`);
+      const currentCombatant = combat.combatant.actor.name;
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "combatUpdated",
-        combatants: combat.combatants.map(c => ({
-          id: c.id,
-          name: c.name,
-          initiative: c.initiative
-        })),
+        combatId: combat.id,
+        round: combat.round,
+        turn: combat.turn,
+        combatants: combatantsData,
+        currentCombatant
       });
     });
-  
-    Hooks.on("combatTurn", (combat, turnData) => {
-      debugLog(`Combat turn: ${turnData.turn}`);
+    
+    Hooks.on("combatTurn", (combat) => {
       const currentCombatant = combat.combatant;
       if (currentCombatant) {
-        debugLog(`Turn notification for: ${currentCombatant.actor.name}`);
+        debugLog(`${MODULE_NAME} | Turn notification for: ${currentCombatant.actor.name}`);
+        
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: "turnNotification",
           combatantName: currentCombatant.actor.name,
           combatantId: currentCombatant.actor.id,
+          initiative: currentCombatant.initiative,
+          round: combat.round,
+          turn: combat.turn,
         });
       }
     });
   
     Hooks.on("createChatMessage", (chatMessage, options, userId) => {
-      const message = chatMessage.data.content;
-      debugLog(`Relaying message to Discord: ${message}`);
+      const message = chatMessage.system.content; 
+      debugLog(`${MODULE_NAME} | Relaying message to Discord1: ${message}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: "chatRelayToDiscord",
         message,
@@ -72,10 +83,10 @@ export function registerHooks() {
     });
   
     Hooks.on("useItem", (item, options) => {
-      debugLog(`Item used: ${item.name}`);
+      debugLog(`${MODULE_NAME} | Item used: ${item.name}`);
       const actor = item.actor;
       if (actor && (item.type === "spell" || item.type === "feat")) {
-        debugLog(`Spell or ability used: ${item.name}`);
+        debugLog(`${MODULE_NAME} | Spell or ability used: ${item.name}`);
         game.socket.emit(`module.${MODULE_NAME}`, {
           action: item.type === "spell" ? "spellUsed" : "abilityUsed",
           casterName: actor.name,
@@ -86,13 +97,16 @@ export function registerHooks() {
     });
   
     Hooks.on("restComplete", (actor, restData) => {
-      debugLog(`Rest completed: ${actor.name}`);
+      debugLog(`${MODULE_NAME} | Rest completed: ${actor.name}`);
       const restType = restData.longRest ? "longRest" : "shortRest";
-      debugLog(`${actor.name} completed a ${restType}`);
+      debugLog(`${MODULE_NAME} | ${actor.name} completed a ${restType}`);
       game.socket.emit(`module.${MODULE_NAME}`, {
         action: restType,
         actorId: actor.id,
         actorName: actor.name,
       });
     });
+
+  debugLog(`${MODULE_NAME} hooks registered`);
+
   }

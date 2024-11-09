@@ -1,4 +1,4 @@
-const MODULE_NAME = "discord-bot-integration";
+export const MODULE_NAME = "discord-bot-integration";
 console.log(`${MODULE_NAME} module loading...`);
 
 import { registerHooks } from "./hooks.js";
@@ -9,7 +9,6 @@ Hooks.once("init", async () => {
   console.log(`${MODULE_NAME} | Initializing module`);
 
   registerSettings();
-
 });
 
 Hooks.once("ready", () => {

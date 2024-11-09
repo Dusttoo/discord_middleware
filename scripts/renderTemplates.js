@@ -1,15 +1,22 @@
 export async function renderCharacterStats(actor) {
-    const templatePath = "modules/discord-bot-integration/templates/character-stats.html";
-    const characterData = {
-      name: actor.name,
-      hp: actor.system.attributes.hp.value,
-      maxHp: actor.system.attributes.hp.max,
-      ac: actor.system.attributes.ac.value,
-      abilities: actor.system.abilities,
-    };
-    const htmlContent = await renderTemplate(templatePath, characterData);
-    ChatMessage.create({ content: htmlContent, whisper: ChatMessage.getWhisperRecipients("GM") });
-  }
+  const templatePath = "modules/discord-bot-integration/templates/character-stats.html";
+
+  const characterData = {
+    name: actor.name,
+    hp: actor.system.attributes.hp.value,
+    maxHp: actor.system.attributes.hp.max,
+    ac: actor.system.attributes.ac.value,
+    abilities: Object.entries(actor.system.abilities).map(([key, value]) => ({
+      name: key.toUpperCase(), 
+      value: value.value,
+      mod: value.mod,
+      dc: value.dc
+    })),
+  };
+
+  const htmlContent = await renderTemplate(templatePath, characterData);
+  ChatMessage.create({ content: htmlContent, whisper: ChatMessage.getWhisperRecipients("GM") });
+}
   
   export async function renderInventory(actor) {
     const templatePath = "modules/discord-bot-integration/templates/inventory.html";
