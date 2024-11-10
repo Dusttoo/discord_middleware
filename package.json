@@ -1,6 +1,6 @@
 {
   "name": "discord-bot-integration",
-  "version": "1.0.11",
+  "version": "1.1.1",
   "description": "Discord Bot Integration for Foundry VTT",
   "main": "dist/main.js",
   "scripts": {
