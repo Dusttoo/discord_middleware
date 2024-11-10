@@ -1,5 +1,6 @@
 import { MODULE_NAME } from "./index.js";
 import { debugLog } from "./utils/debuggingUtils";
+debugLog(`[Discord Bot Integration] Hooks module loading...`);
 export function registerHooks() {
   
     Hooks.on("updateActor", (actor, data, options, userId) => {
