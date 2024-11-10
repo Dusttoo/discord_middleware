@@ -7,6 +7,7 @@ import {
   renderSpellDetails,
   renderTurnNotification,
 } from "./renderTemplates";
+import { findActorByNameOrId } from "./utils/dataUtils";
 debugLog(`${MODULE_NAME} setting up api...`);
 
 export async function getCharacterStats(request) {
@@ -19,11 +20,7 @@ export async function getCharacterStats(request) {
     return { error: "Game is not ready. Please try again shortly." };
   }
 
-  const actor = game.actors.get(request.actorId);
-  debugLog(
-    `${MODULE_NAME} | Current game.actors Map:`,
-    Array.from(game.actors.entries())
-  );
+  const actor = findActorByNameOrId(request.actorId);
 
   if (!actor) {
     debugLog(
@@ -62,7 +59,8 @@ export async function getCharacterStats(request) {
 
 export async function getCharacterInventory(request) {
   debugLog(`${MODULE_NAME} | getCharacterInventory:`, request.actorId);
-  const actor = game.actors.get(request.actorId);
+  const actor = findActorByNameOrId(request.actorId);
+
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${request.actorId} not found`);
     console.warn(`Actor with ID ${request.actorId} not found`);
@@ -86,7 +84,8 @@ export async function getCharacterInventory(request) {
 
 export async function getCharacterSpells(request) {
   debugLog(`${MODULE_NAME} | getCharacterSpells:`, request.actorId);
-  const actor = game.actors.get(request.actorId);
+  const actor = findActorByNameOrId(request.actorId);
+
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${request.actorId} not found`);
     console.warn(`Actor with ID ${request.actorId} not found`);
@@ -112,7 +111,8 @@ export function handleError(error) {
 }
 
 export async function sendCharacterSpells(request, requestId) {
-  const actor = game.actors.get(request.actorId);
+  const actor = findActorByNameOrId(request.actorId);
+
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${request.actorId} not found`);
     console.warn(`Actor with ID ${request.actorId} not found`);
@@ -143,7 +143,7 @@ export async function updateCharacterHP(request) {
   debugLog(`${MODULE_NAME} | updateCharacterHP:`, actorId, Number(hpChange));
 
   try {
-    const actor = game.actors.get(actorId);
+    const actor = findActorByNameOrId(request.actorId);
     if (!actor) {
       debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
       console.warn(`Actor with ID ${actorId} not found`);
@@ -176,7 +176,7 @@ export async function updateCharacterHP(request) {
 
 export async function updateCharacterCondition(request) {
   const { actorId, condition, add, requestId } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
 
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
@@ -246,7 +246,7 @@ function getConditionIcon(condition) {
 
 export async function updateResource(request) {
   const { actorId, resourceName, value, requestId } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
@@ -275,7 +275,7 @@ export async function updateResource(request) {
 
 export async function addItemToInventory(request) {
   const { actorId, itemData, requestId } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
 
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
@@ -339,7 +339,7 @@ export async function addItemToInventory(request) {
 
 export async function removeItemFromInventory(request) {
   const { actorId, itemId, requestId, quantity = 1 } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
 
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
@@ -386,7 +386,7 @@ export async function removeItemFromInventory(request) {
 
 export async function getItemDetails(request) {
   const { actorId, itemId, requestId } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
     console.warn(`Actor with ID ${actorId} not found`);
@@ -416,7 +416,7 @@ export async function getItemDetails(request) {
 
 export async function rollInitiative(request) {
   const { requestId, actorId } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
 
   if (!actor) {
     debugLog(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
@@ -526,8 +526,8 @@ export async function sendCombatSummary(requestId) {
 
 export async function rollAttack(request) {
   const { requestId, actorId, targetId } = request;
-  const attacker = game.actors.get(actorId);
-  const target = game.actors.get(targetId);
+  const attacker = findActorByNameOrId(request.actorId);
+  const target =findActorByNameOrId(targetId);
 
   if (!attacker) {
     console.warn(`Attacker with ID ${actorId} not found`);
@@ -676,7 +676,7 @@ function getFumbleEvent() {
 
 export async function rollSavingThrow(request) {
   const { requestId, saveType, actorId, dc } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
   if (!actor) {
     console.warn(`Actor with ID ${actorId} not found`);
     return `${MODULE_NAME} | Actor with ID ${actorId} not found`;
@@ -746,7 +746,7 @@ export async function rollSavingThrow(request) {
 
 export async function applyDamageOrHealing(request) {
   const { requestId, actorId, amount } = request;
-  const actor = game.actors.get(actorId);
+  const actor = findActorByNameOrId(request.actorId);
   if (!actor) {
     console.warn(`${MODULE_NAME} | Actor with ID ${actorId} not found`);
     return `${MODULE_NAME} | Actor with ID ${actorId} not found`;
@@ -855,7 +855,7 @@ export async function relayChatToDiscord(message, requestId) {
 
 export async function relayRPCommand(request) {
   const { requestId, characterId, message } = request;
-  const character = game.actors.get(characterId);
+  const character = findActorByNameOrId(characterId);
   if (!character) {
     debugLog(`${MODULE_NAME} | Character with ID ${characterId} not found`);
     console.warn(`Character with ID ${characterId} not found`);
@@ -879,7 +879,7 @@ export async function relayRPCommand(request) {
 
 export async function castSpell(request) {
   const { requestId, casterId, spellId, targetId } = request;
-  const caster = game.actors.get(casterId);
+  const caster = findActorByNameOrId(casterId);
   debugLog(`${MODULE_NAME} | castSpell:`, casterId, spellId, targetId);
 
   if (!caster) {
@@ -897,7 +897,7 @@ export async function castSpell(request) {
     return;
   }
 
-  const target = game.actors.get(targetId);
+  const target = findActorByNameOrId(targetId);
   const spellDescription =
     spell.system.description.value || "No description available";
 
@@ -1005,7 +1005,7 @@ function calculateSpellEffect(effect, caster) {
 export async function useAbility(request) {
   const { casterId, abilityId, targetId, requestId } = request;
   debugLog(`${MODULE_NAME} | useAbility:`, request);
-  const caster = game.actors.get(casterId);
+  const caster = findActorByNameOrId(casterId);
   
   if (!caster) {
     debugLog(`${MODULE_NAME} | Caster with ID ${casterId} not found`);
@@ -1022,7 +1022,7 @@ export async function useAbility(request) {
     return;
   }
 
-  const target = game.actors.get(targetId) || caster; // Use caster as fallback target
+  const target = findActorByNameOrId(targetId) || caster; // Use caster as fallback target
   const abilityDescription = ability.system.description.value || "No description available";
 
   const hasLimitedUses = ability.system.uses?.value > 0;
@@ -1267,7 +1267,7 @@ export async function addNoteToLog(request) {
 export async function queryNpcStats(request) {
   debugLog(`${MODULE_NAME} | queryNpcStats:`, request);
   const { npcId, requestId } = request;
-  const npc = game.actors.get(npcId);
+  const npc = findActorByNameOrId(npcId);
   if (!npc) {
     debugLog(`${MODULE_NAME} | NPC with ID ${npcId} not found`);
     console.warn(`NPC with ID ${npcId} not found`);
@@ -1352,7 +1352,7 @@ export async function createRandomNpc() {
 
 export async function handleLongRest(request) {
   const { characterId, requestId } = request;
-  const character = game.actors.get(characterId);
+  const character = findActorByNameOrId(characterId);
 
   if (!character) {
     debugLog(`${MODULE_NAME} | Character with ID ${characterId} not found`);
@@ -1384,7 +1384,7 @@ export async function handleLongRest(request) {
 export async function handleShortRest(request) {
   const { characterId, requestId } = request;
   debugLog(`${MODULE_NAME} | handleShortRest:`, characterId, requestId);
-  const character = game.actors.get(characterId);
+  const character = findActorByNameOrId(characterId);
   if (!character) {
     debugLog(`${MODULE_NAME} | Character with ID ${characterId} not found`);
     console.warn(`Character with ID ${characterId} not found`);
